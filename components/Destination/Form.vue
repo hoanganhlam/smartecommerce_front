@@ -10,14 +10,20 @@
             <a-col :md="12">
                 <a-form-item
                     label="Nhãn">
-                    <a-input v-model="form.label" placeholder="Nhãn"/>
+                    <GenericBrowser
+                        mode="default"
+                        name-space="geography"
+                        model="taxonomy"
+                        @input="item => form.taxonomy = item"/>
                 </a-form-item>
             </a-col>
         </a-row>
-        <a-form-item
-            v-if="isCategory"
-            label="Danh mục cha">
-            <GenericBrowser model="category" @input="category => form.parent = category.id"/>
+        <a-form-item label="Địa danh cha">
+            <GenericBrowser
+                mode="default"
+                name-space="geography"
+                model="destination"
+                @input="item => form.parent = item"/>
         </a-form-item>
         <a-form-item
             label="Mô tả">
@@ -33,30 +39,25 @@
     import GenericBrowser from '../Generic/Browser'
 
     export default {
-        name: "ProductForm",
+        name: "DestinationForm",
         components: {
             GenericBrowser,
         },
-        props: {
-            isCategory: {
-                default: true,
-                type: Boolean
-            }
-        },
+        props: {},
         data() {
             return {
                 form: {
                     name: null,
                     description: null,
-                    label: null,
+                    taxonomy: null,
                     parent: null
                 }
             }
         },
         methods: {
             async doSave() {
-                let model = this.isCategory ? 'categories' : 'taxonomies'
-                let res = await this.$axios.$post(`/warehouse/${model}/`, this.form)
+                this.form.address = this.form.name
+                let res = await this.$axios.$post(`/geography/destinations/`, this.form)
                 this.$emit('done', res)
             }
         }

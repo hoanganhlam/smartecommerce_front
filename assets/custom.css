@@ -1,0 +1,25 @@
+.ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+    padding: 10px 10px;
+}
+
+#main-site {
+    min-height: 100vh
+}
+
+#main-site .trigger {
+    font-size: 18px;
+    line-height: 64px;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: color .3s;
+}
+
+#main-site .trigger:hover {
+    color: #1890ff;
+}
+
+#main-site .logo {
+    height: 32px;
+    background: rgba(255, 255, 255, .2);
+    margin: 16px;
+}

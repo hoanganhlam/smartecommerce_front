@@ -1,43 +1,96 @@
 <template>
     <a-table :columns="columns"
-             :rowKey="record => record.login.uuid"
+             :rowKey="record => record.id"
              :dataSource="data"
-             :pagination="pagination"
-             :loading="loading"
-             @change="handleTableChange"
-    >
-        <template slot="name" slot-scope="name">
-            {{name.first}} {{name.last}}
+             :loading="loading">
+        <template slot="ordering" slot-scope="ordering">
+            <a-list itemLayout="horizontal" :dataSource="ordering">
+                <a-list-item slot="renderItem" slot-scope="item, index">
+                    <a-list-item-meta>
+                        <h4 slot="title">{{item.product_instance.name}}</h4>
+                        <template slot="avatar">
+                            <a-carousel style="max-width: 50px;">
+                                <div v-for="photo in item.product_instance.photos" :key="photo.id">
+                                    <img style="width: 100%" :src="api_domain + photo.thumbnails.thumb_150_150" alt="">
+                                </div>
+                            </a-carousel>
+                        </template>
+                    </a-list-item-meta>
+                </a-list-item>
+            </a-list>
         </template>
+        <template slot="customer" slot-scope="customer">
+            {{customer.fullname}} ({{customer.phone}})
+        </template>
+        <div slot="expandedRowRender" slot-scope="record" style="margin: 0">
+            <OrderForm :order="record"/>
+        </div>
     </a-table>
 </template>
 <script>
+    import OrderForm from '../../components/Order/Form'
+
     const columns = [
         {
-            title: 'Name',
-            dataIndex: 'name',
-            sorter: true,
-            width: '20%',
-            scopedSlots: {customRender: 'name'},
-        }, {
-            title: 'Gender',
-            dataIndex: 'gender',
-            filters: [
-                {text: 'Male', value: 'male'},
-                {text: 'Female', value: 'female'},
-            ],
-            width: '20%',
-        }, {
-            title: 'Email',
-            dataIndex: 'email',
+            title: 'ID',
+            dataIndex: 'id',
+            scopedSlots: {customRender: 'id'},
+        },
+        {
+            title: 'Ghi chú',
+            dataIndex: 'note',
+            scopedSlots: {customRender: 'note'},
+        },
+        {
+            title: 'Khách hàng',
+            dataIndex: 'customer',
+            scopedSlots: {customRender: 'customer'},
+        },
+        {
+            title: 'Địa chỉ',
+            dataIndex: 'address',
+            scopedSlots: {customRender: 'address'},
+        },
+        {
+            title: 'Sản phẩm',
+            dataIndex: 'ordering',
+            scopedSlots: {customRender: 'ordering'},
+            width: '300px'
+        },
+        {
+            title: 'Thời gian tạo',
+            dataIndex: 'created',
+            scopedSlots: {customRender: 'created'},
+        },
+        {
+            title: 'Cập nhập',
+            dataIndex: 'updated',
+            scopedSlots: {customRender: 'updated'},
+        },
+        {
+            title: 'Tổng tiền',
+            dataIndex: 'total',
+            scopedSlots: {customRender: 'total'},
+        },
+        {
+            title: 'Phí giao hàng',
+            dataIndex: 'delivery_cost',
+            scopedSlots: {customRender: 'delivery_cost'},
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            scopedSlots: {customRender: 'status'},
         }
     ];
-
 
     export default {
         name: 'OrderPage',
         mounted() {
             this.fetch();
+        },
+        components: {
+            OrderForm
         },
         data() {
             return {
@@ -48,33 +101,11 @@
             }
         },
         methods: {
-            handleTableChange(pagination, filters, sorter) {
-                console.log(pagination);
-                const pager = {...this.pagination};
-                pager.current = pagination.current;
-                this.pagination = pager;
-                this.fetch({
-                    results: pagination.pageSize,
-                    page: pagination.current,
-                    sortField: sorter.field,
-                    sortOrder: sorter.order,
-                    ...filters,
-                });
-            },
-            fetch(params = {}) {
-                console.log('params:', params);
+            fetch() {
                 this.loading = true
-                this.$axios.$get('https://randomuser.me/api', {
-                    results: 10,
-                    ...params,
-                }).then((data) => {
-                    const pagination = {...this.pagination};
-                    // Read total count from server
-                    // pagination.total = data.totalCount;
-                    pagination.total = 200;
-                    this.loading = false;
+                this.$axios.$get('/warehouse/orders').then((data) => {
                     this.data = data.results;
-                    this.pagination = pagination;
+                    this.loading = false
                 });
             }
         },

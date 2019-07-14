@@ -4,23 +4,25 @@
             <a-col :md="12">
                 <a-form-item
                     label="Tên">
-                    <a-input v-model="form.name" placeholder="Tên danh mục"/>
+                    <a-input v-model="form.name" placeholder="Tên Kho"/>
                 </a-form-item>
             </a-col>
             <a-col :md="12">
                 <a-form-item
-                    label="Nhãn">
-                    <a-input v-model="form.label" placeholder="Nhãn"/>
+                    label="Địa chính">
+                    <GenericBrowser
+                        name-space="geography"
+                        mode="default"
+                        model="destination"
+                        @input="item => form.destination = item"/>
                 </a-form-item>
             </a-col>
         </a-row>
-        <a-form-item
-            v-if="isCategory"
-            label="Danh mục cha">
-            <GenericBrowser
-                :mode="mode"
-                model="category"
-                @input="category => form.parent = category"/>
+        <a-form-item label="Địa chỉ">
+            <a-input v-model="form.address" placeholder="Số 1, Hàm nghi..."/>
+        </a-form-item>
+        <a-form-item label="Số điện thoại">
+            <a-input v-model="form.phone" placeholder="088888888"/>
         </a-form-item>
         <a-form-item
             label="Mô tả">
@@ -48,19 +50,18 @@
         },
         data() {
             return {
-                mode: this.isCategory ? 'default' : 'multiple',
                 form: {
                     name: null,
                     description: null,
-                    label: null,
-                    parent: null
+                    phone: null,
+                    destination: null,
+                    address: null
                 }
             }
         },
         methods: {
             async doSave() {
-                let model = this.isCategory ? 'categories' : 'taxonomies'
-                let res = await this.$axios.$post(`/warehouse/${model}/`, this.form)
+                let res = await this.$axios.$post(`/warehouse/warehouses/`, this.form)
                 this.$emit('done', res)
             }
         }

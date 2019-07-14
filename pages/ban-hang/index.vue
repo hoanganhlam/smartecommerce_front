@@ -1,10 +1,17 @@
 <template>
-
+    <div>
+        <OrderForm/>
+    </div>
 </template>
 
 <script>
+    import OrderForm from '../../components/Order/Form'
+
     export default {
-        name: "index"
+        name: "index",
+        components: {
+            OrderForm
+        }
     }
 </script>
 

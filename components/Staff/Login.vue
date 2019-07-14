@@ -62,11 +62,11 @@
                             })
                             .then(res => {
                                 console.log(res)
+                                _this.$emit('done')
                             })
                             .catch(err => {
                                 console.log(err)
                             }).finally(() => {
-                            this.loading = false
                         })
                     }
                 });
